@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply min-h-screen bg-background;
+  }
+
+  h1 {
+    @apply text-4xl font-bold mb-6 text-primary;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold mb-4 text-primary;
+  }
+
+  h3 {
+    @apply text-2xl font-medium mb-3 text-primary;
+  }
+
+  h4 {
+    @apply text-xl font-medium mb-2 text-primary;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md transition-colors duration-200 font-medium;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-dark;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-primary hover:bg-secondary-dark;
+  }
+
+  .btn-outline {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden border border-pink-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-pink-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent;
+  }
+
+  .error-text {
+    @apply text-red-500 text-sm mt-1;
+  }
+  @layer components {
+    .heading {
+      @apply text-white text-4xl font-bold;
+    }
+  }
+  .fixed-message-icon {
+    position: fixed;
+    right: 20px;
+    bottom: 80px; /* Position above the footer */
+    z-index: 999;
+  }
+  
+  /* Message Icon Styles */
+  .message-icon-container {
+    position: relative;
+  }
+  
+  .message-icon-button {
+    background-color: #db41ba;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .message-icon-button:hover {
+    background-color: #b92982;
+  }
+  
+  /* Message Box Styles */
+  .message-box {
+    position: absolute;
+    right: 0;
+    bottom: 60px;
+    width: 350px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    max-height: 500px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .message-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e1e4e8;
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+  }
+  
+  .message-box-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+  }
+  
+  .message-box-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .message-box-actions button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+  }
+  
+  .message-box-actions button:hover {
+    color: #333;
+  }
+  
+  .message-box-content {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    max-height: 400px;
+  }
+  .input {
+    @apply border border-pink-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500;
+  }
+  
+  .textarea {
+    @apply border border-pink-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-pink-500;
+  }
+  
+  .btn-primary {
+    @apply bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded transition duration-200;
+  }
+}

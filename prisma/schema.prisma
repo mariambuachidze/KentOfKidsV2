@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int                @id @default(autoincrement())
+  name               String             @db.VarChar(50)
+  surname            String             @db.VarChar(50)
+  phone_number       String             @db.Char(11)
+  email              String             @unique @db.VarChar(50)
+  password           String             @db.Text
+  is_admin           Boolean            @default(false)
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @updatedAt
+  appointmentReplies AppointmentReply[]
+  appointments       Appointment[]
+  commentReplies     CommentReply[]
+  comments           Comment[]
+  sentMessages       Message[]          @relation("SentMessages")
+  receivedMessages   Message[]          @relation("ReceivedMessages")
+
+  @@map("users")
+}
+
+model Message {
+  id          Int      @id @default(autoincrement())
+  sender_id   Int
+  receiver_id Int
+  title       String   @db.VarChar(50)
+  description String   @db.VarChar(500)
+  created_at  DateTime @default(now())
+  sender      User     @relation("SentMessages", fields: [sender_id], references: [id], onDelete: Cascade)
+  receiver    User     @relation("ReceivedMessages", fields: [receiver_id], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model Category {
+  id         Int       @id @default(autoincrement())
+  name       String    @unique @db.VarChar(50)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  products   Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(50)
+  description String    @db.VarChar(500)
+  price       Decimal   @db.Decimal(10, 2)
+  image_url   String    @db.VarChar(500)
+  category_id Int
+  created_at  DateTime  @default(now())
+  updated_at  DateTime  @updatedAt
+  category    Category  @relation(fields: [category_id], references: [id], onDelete: Cascade)
+  stock       Stock?
+  comments    Comment[]
+
+  @@index([category_id])
+  @@map("products")
+}
+
+model Stock {
+  product_id Int     @id
+  quantity   Int     @default(0)
+  updated_at DateTime @updatedAt
+  product    Product @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@map("stocks")
+}
+
+model Comment {
+  id          Int            @id @default(autoincrement())
+  user_id     Int
+  product_id  Int
+  title       String         @db.VarChar(50)
+  description String         @db.VarChar(500)
+  rating      Int            @db.SmallInt
+  created_at  DateTime       @default(now())
+  updated_at  DateTime       @updatedAt
+  replies     CommentReply[]
+  user        User           @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  product     Product        @relation(fields: [product_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([product_id])
+  @@map("comments")
+}
+
+model CommentReply {
+  id         Int      @id @default(autoincrement())
+  comment_id Int
+  user_id    Int
+  reply      String   @db.VarChar(500)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  comment    Comment  @relation(fields: [comment_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([comment_id])
+  @@index([user_id])
+  @@map("comment_replies")
+}
+
+model Appointment {
+  id          Int                @id @default(autoincrement())
+  user_id     Int
+  description String             @db.VarChar(500)
+  date        DateTime           @db.Date
+  time        DateTime           @db.Time
+  created_at  DateTime           @default(now())
+  updated_at  DateTime           @updatedAt
+  replies     AppointmentReply[]
+  user        User               @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([date])
+  @@map("appointments")
+}
+
+model AppointmentReply {
+  id             Int         @id @default(autoincrement())
+  appointment_id Int
+  user_id        Int
+  reply          String      @db.VarChar(500)
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  appointment    Appointment @relation(fields: [appointment_id], references: [id], onDelete: Cascade)
+  user           User        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([appointment_id])
+  @@index([user_id])
+  @@map("appointment_replies")
+}
