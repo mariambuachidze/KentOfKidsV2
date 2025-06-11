@@ -20,7 +20,7 @@ export default function ProductCard({ product }) {
         <div className="flex justify-between items-center mb-3">
           <p className="text-gray-600 text-sm">{product.category.name}</p>
           <p className="font-semibold text-primary">
-            {product.price.toFixed(2)} TL
+            {product.price} TL
           </p>
         </div>
         <p className="text-gray-700 text-sm mb-4 line-clamp-2">

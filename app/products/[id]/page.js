@@ -130,7 +130,7 @@ export default async function ProductDetails({ params }) {
           </div>
 
           <div className="text-2xl font-bold text-primary mb-6">
-            {product.price?.toFixed(2) || "0.00"} TL
+            {product.price || "0.00"} TL
           </div>
 
           <div className="mb-6">
