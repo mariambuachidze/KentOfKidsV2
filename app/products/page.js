@@ -6,9 +6,9 @@ export const metadata = {
 };
 
 async function getProducts() {
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  // const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
   
-  const res = await fetch(`${baseUrl}/api/admin/products`, {
+  const res = await fetch("/api/admin/products", {
     cache: 'no-store', // Her sayfa yüklemesinde yeni veri çeker
   });
 
@@ -20,7 +20,7 @@ async function getProducts() {
 async function getCategories() {
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
   
-  const res = await fetch(`${baseUrl}/api/admin/categories`, {
+  const res = await fetch("/api/admin/categories", {
     cache: 'no-store',
   });
 
