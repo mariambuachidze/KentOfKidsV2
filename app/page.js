@@ -8,7 +8,7 @@ import { FaTshirt, FaCalendarCheck, FaStar } from "react-icons/fa";
 export default function Home() {
   const [products, setProducts] = useState([]);
 
-  // Güvenli fiyat formatlaması
+  
   const formatPrice = (price) => {
     const numPrice = parseFloat(price);
     return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);

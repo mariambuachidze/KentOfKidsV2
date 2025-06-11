@@ -18,6 +18,12 @@ export default function ProductsManagement() {
     stock: { quantity: 0 }
   });
 
+  // Güvenli fiyat formatlaması - ana sayfadaki gibi
+  const formatPrice = (price) => {
+    const numPrice = parseFloat(price);
+    return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+  };
+
   useEffect(() => {
     fetchProducts();
     fetchCategories();
@@ -52,12 +58,12 @@ export default function ProductsManagement() {
     if (name === 'quantity') {
       setCurrentProduct({
         ...currentProduct,
-        stock: { ...currentProduct.stock, quantity: parseInt(value) }
+        stock: { ...currentProduct.stock, quantity: parseInt(value) || 0 }
       });
     } else {
       setCurrentProduct({
         ...currentProduct,
-        [name]: name === 'price' ? parseFloat(value) || '' : value
+        [name]: name === 'price' ? value : value // price'ı string olarak tutuyoruz, submit sırasında parse edeceğiz
       });
     }
   };
@@ -78,8 +84,8 @@ export default function ProductsManagement() {
   const openEditModal = (product) => {
     setCurrentProduct({
       ...product,
-      category_id: product.category_id.toString(),
-      price: product.price.toString(),
+      category_id: product.category_id ? product.category_id.toString() : '',
+      price: product.price ? product.price.toString() : '0',
       stock: product.stock || { quantity: 0 }
     });
     setFormMode('edit');
@@ -101,9 +107,9 @@ export default function ProductsManagement() {
           name: currentProduct.name,
           description: currentProduct.description,
           image_url: currentProduct.image_url,
-          category_id: parseInt(currentProduct.category_id),
-          price: parseFloat(currentProduct.price),
-          quantity: currentProduct.stock?.quantity ?? 0 // Ensure quantity is a number
+          category_id: parseInt(currentProduct.category_id) || 0,
+          price: parseFloat(currentProduct.price) || 0,
+          quantity: currentProduct.stock?.quantity ?? 0
         }),
       });
 
@@ -164,25 +170,25 @@ export default function ProductsManagement() {
                 <td className="py-2 px-4 border-b">{product.id}</td>
                 <td className="py-2 px-4 border-b">
                   <img
-                    src={product.image_url}
-                    alt={product.name}
+                    src={product.image_url || "/placeholder.jpg"}
+                    alt={product.name || "Ürün"}
                     className="h-16 w-16 object-cover rounded"
                   />
                 </td>
-                <td className="py-2 px-4 border-b">{product.name}</td>
-                <td className="py-2 px-4 border-b">{product.category?.name}</td>
-                <td className="py-2 px-4 border-b">₺{product.price.toFixed(2)}</td>
-                <td className="py-2 px-4 border-b">{product.stock?.quantity || 'Stok Yok'}</td>
+                <td className="py-2 px-4 border-b">{product.name || "Ürün Adı"}</td>
+                <td className="py-2 px-4 border-b">{product.category?.name || "Kategori"}</td>
+                <td className="py-2 px-4 border-b">₺{formatPrice(product.price)}</td>
+                <td className="py-2 px-4 border-b">{product.stock?.quantity || 0}</td>
                 <td className="py-2 px-4 border-b">
                   <button
                     onClick={() => openEditModal(product)}
-                    className="text-blue-600 mr-2"
+                    className="text-blue-600 mr-2 hover:underline"
                   >
                     Düzenle
                   </button>
                   <button
                     onClick={() => deleteProduct(product.id)}
-                    className="text-red-600"
+                    className="text-red-600 hover:underline"
                   >
                     Sil
                   </button>
