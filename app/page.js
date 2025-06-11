@@ -8,15 +8,28 @@ import { FaTshirt, FaCalendarCheck, FaStar } from "react-icons/fa";
 export default function Home() {
   const [products, setProducts] = useState([]);
 
+  // Güvenli fiyat formatlaması
+  const formatPrice = (price) => {
+    const numPrice = parseFloat(price);
+    return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+  };
+
   useEffect(() => {
     async function loadProducts() {
-      const response = await fetch('/api/admin/products');
-      const data = await response.json();
-      setProducts(data.slice(0,3));
+      try {
+        const response = await fetch('/api/admin/products');
+        if (!response.ok) {
+          throw new Error('Products could not be loaded');
+        }
+        const data = await response.json();
+        setProducts(data.slice(0,3));
+      } catch (error) {
+        console.error('Error loading products:', error);
+        setProducts([]); // Hata durumunda boş array
+      }
     }
     loadProducts();
   }, []);
-
 
   return (
     <main>
@@ -107,39 +120,45 @@ export default function Home() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {products.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden"
-              >
-                <div className="h-64 relative">
-                  <Image
-                    src={product.image_url || "/placeholder.jpg"}
-                    alt={product.name}
-                    layout="fill"
-                    objectFit="cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-medium mb-2">{product.name}</h3>
-                  <div className="flex justify-between mb-2">
-                    <p className="text-gray-600">{product.category.name}</p>
-                    <p className="font-semibold text-primary">
-                      ₺{product.price.toFixed(2)}
-                    </p>
+            {products.length > 0 ? (
+              products.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden"
+                >
+                  <div className="h-64 relative">
+                    <Image
+                      src={product.image_url || "/placeholder.jpg"}
+                      alt={product.name || "Ürün"}
+                      layout="fill"
+                      objectFit="cover"
+                    />
                   </div>
-                  <p className="text-gray-700 text-sm mb-4">
-                    {product.description}
-                  </p>
-                  <Link
-                    href={`/products/${product.id}`}
-                    className="btn btn-primary w-full text-center"
-                  >
-                    Detayları Gör
-                  </Link>
+                  <div className="p-4">
+                    <h3 className="text-lg font-medium mb-2">{product.name || "Ürün Adı"}</h3>
+                    <div className="flex justify-between mb-2">
+                      <p className="text-gray-600">{product.category?.name || "Kategori"}</p>
+                      <p className="font-semibold text-primary">
+                        ₺{formatPrice(product.price)}
+                      </p>
+                    </div>
+                    <p className="text-gray-700 text-sm mb-4">
+                      {product.description || "Açıklama bulunmuyor"}
+                    </p>
+                    <Link
+                      href={`/products/${product.id}`}
+                      className="btn btn-primary w-full text-center"
+                    >
+                      Detayları Gör
+                    </Link>
+                  </div>
                 </div>
+              ))
+            ) : (
+              <div className="col-span-3 text-center py-8">
+                <p className="text-gray-500">Ürünler yükleniyor...</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>

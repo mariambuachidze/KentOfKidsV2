@@ -4,6 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 export default function ProductCard({ product }) {
+  // Güvenli fiyat formatlaması
+  const formatPrice = (price) => {
+    const numPrice = parseFloat(price);
+    return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+  };
+
   return (
     <div className="card h-full flex flex-col hover:shadow-lg transition-shadow duration-300">
       <div className="relative w-full aspect-[4/3] overflow-hidden rounded-t-lg">
@@ -18,13 +24,13 @@ export default function ProductCard({ product }) {
       <div className="p-4 flex-grow flex flex-col">
         <h3 className="text-lg font-medium mb-2">{product.name}</h3>
         <div className="flex justify-between items-center mb-3">
-          <p className="text-gray-600 text-sm">{product.category.name}</p>
+          <p className="text-gray-600 text-sm">{product.category?.name || 'Kategori yok'}</p>
           <p className="font-semibold text-primary">
-            {product.price} TL
+            {formatPrice(product.price)} TL
           </p>
         </div>
         <p className="text-gray-700 text-sm mb-4 line-clamp-2">
-          {product.description}
+          {product.description || 'Açıklama bulunmuyor'}
         </p>
         <div className="mt-auto">
           <Link

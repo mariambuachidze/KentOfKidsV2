@@ -6,12 +6,17 @@ import CategoryFilter from './CategoryFilter';
 
 // Bu bileşen, ürünleri listelemek ve filtrelemek için kullanılır
 export default function ProductList({ products, categories }) {
+  
   // State tanımlamaları
   const [selectedCategory, setSelectedCategory] = useState('all'); // Seçili kategori - varsayılan olarak 'tümü'
   const [sortBy, setSortBy] = useState('name'); // Sıralama kriteri - varsayılan olarak 'isim'
 
-  // Kategori filtrelemesi
-  // Eğer 'tümü' seçildiyse bütün ürünleri göster, değilse seçilen kategoriye göre filtrele
+  // Güvenli sayı dönüştürme fonksiyonu
+  const safeParseFloat = (value) => {
+    const parsed = parseFloat(value);
+    return isNaN(parsed) ? 0 : parsed;
+  };
+
   const filteredProducts = products.filter(product => 
     selectedCategory === 'all' || product.category_id === parseInt(selectedCategory)
   );
@@ -21,9 +26,11 @@ export default function ProductList({ products, categories }) {
     if (sortBy === 'name') {
       return a.name.localeCompare(b.name); // İsme göre alfabetik sıralama
     } else if (sortBy === 'price-low') {
-      return a.price - b.price; // Fiyata göre artan sıralama
+      // Güvenli fiyat karşılaştırması
+      return safeParseFloat(a.price) - safeParseFloat(b.price);
     } else if (sortBy === 'price-high') {
-      return b.price - a.price; // Fiyata göre azalan sıralama
+      // Güvenli fiyat karşılaştırması
+      return safeParseFloat(b.price) - safeParseFloat(a.price);
     }
     return 0;
   });

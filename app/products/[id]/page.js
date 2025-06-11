@@ -8,7 +8,6 @@ export async function generateMetadata({ params }) {
   const product = await getProduct(params.id);
 
   if (!product) {
-    debugger;
     return {
       title: "Product Not Found | Kent Of Kids",
     };
@@ -25,7 +24,6 @@ async function getProduct(id) {
     const productId = parseInt(id);
 
     if (isNaN(productId)) {
-      debugger;
       return null;
     }
 
@@ -38,7 +36,6 @@ async function getProduct(id) {
 
     return product;
   } catch (error) {
-    debugger;
     console.error("Error fetching product:", error);
     return null;
   }
@@ -88,7 +85,6 @@ async function getProductComments(productId) {
 
     return comments;
   } catch (error) {
-    debugger;
     console.error("Error fetching comments:", error);
     return [];
   }
@@ -101,6 +97,12 @@ export default async function ProductDetails({ params }) {
     notFound();
   }
 
+  // Güvenli fiyat formatlaması
+  const formatPrice = (price) => {
+    const numPrice = parseFloat(price);
+    return isNaN(numPrice) ? '0.00' : numPrice.toFixed(2);
+  };
+
   // Get stock and comments, with default values if they're not found
   const stockQuantity = await getProductStock(product.id);
   const comments = (await getProductComments(product.id)) || [];
@@ -110,15 +112,15 @@ export default async function ProductDetails({ params }) {
       <div className="grid md:grid-cols-2 gap-12">
         {/* Product Image */}
         <div className="w-full overflow-hidden rounded-lg">
-  <div className="relative pt-[75%] bg-gray-100">
-    <Image
-      src={product.image_url || '/images/placeholder.jpg'}
-      alt={product.name}
-      fill
-      className="object-cover object-center"
-    />
-  </div>
-</div>
+          <div className="relative pt-[75%] bg-gray-100">
+            <Image
+              src={product.image_url || '/images/placeholder.jpg'}
+              alt={product.name}
+              fill
+              className="object-cover object-center"
+            />
+          </div>
+        </div>
 
         {/* Product Details */}
         <div>
@@ -130,7 +132,7 @@ export default async function ProductDetails({ params }) {
           </div>
 
           <div className="text-2xl font-bold text-primary mb-6">
-            {product.price || "0.00"} TL
+            {formatPrice(product.price)} TL
           </div>
 
           <div className="mb-6">
