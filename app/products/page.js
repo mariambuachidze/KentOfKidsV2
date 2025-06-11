@@ -1,4 +1,5 @@
 import ProductList from '@/components/ProductList';
+import { prisma } from '@/lib/prisma'; // Prisma import'unu ekleyin
 
 export const metadata = {
   title: 'Products | Kent Of Kids',
@@ -6,39 +7,40 @@ export const metadata = {
 };
 
 async function getProducts() {
-  // const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-  
-  // const res = await fetch(`${process.env.NEXTAUTH_URL || 'https://your-domain.vercel.app'}/api/admin/products`, {
-  //   cache: 'no-store', // Her sayfa yüklemesinde yeni veri çeker
-  // });
-
-  // if (!res.ok) throw new Error('Ürünler alınamadı');
-
-      const products = await prisma.product.findMany({
+  try {
+    const products = await prisma.product.findMany({
       include: {
         stock: true,
         category: true
       }
     });
 
-  return  NextResponse.json(products).json;
+    // Price değerlerini sayıya çevir ve güvenli hale getir
+    const formattedProducts = products.map(product => ({
+      ...product,
+      price: parseFloat(product.price) || 0
+    }));
+
+    return formattedProducts;
+  } catch (error) {
+    console.error('Ürünler alınırken hata:', error);
+    return [];
+  }
 }
 
 async function getCategories() {
-  // const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
-  
-  // const res = await fetch(`${process.env.NEXTAUTH_URL || 'https://your-domain.vercel.app'}/api/admin/categories`, {
-  //   cache: 'no-store',
-  // });
-
-  // if (!res.ok) throw new Error('Kategoriler alınamadı');
-      const categories = await prisma.category.findMany({
-        include: {
-          products: true 
-        }
-      });
+  try {
+    const categories = await prisma.category.findMany({
+      include: {
+        products: true 
+      }
+    });
        
-  return NextResponse.json(categories).json();
+    return categories;
+  } catch (error) {
+    console.error('Kategoriler alınırken hata:', error);
+    return [];
+  }
 }
 
 export default async function ProductsPage() {
