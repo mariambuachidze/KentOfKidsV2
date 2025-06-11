@@ -8,25 +8,37 @@ export const metadata = {
 async function getProducts() {
   // const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
   
-  const res = await fetch(`${process.env.NEXTAUTH_URL || 'https://your-domain.vercel.app'}/api/admin/products`, {
-    cache: 'no-store', // Her sayfa yüklemesinde yeni veri çeker
-  });
+  // const res = await fetch(`${process.env.NEXTAUTH_URL || 'https://your-domain.vercel.app'}/api/admin/products`, {
+  //   cache: 'no-store', // Her sayfa yüklemesinde yeni veri çeker
+  // });
 
-  if (!res.ok) throw new Error('Ürünler alınamadı');
+  // if (!res.ok) throw new Error('Ürünler alınamadı');
 
-  return res.json();
+      const products = await prisma.product.findMany({
+      include: {
+        stock: true,
+        category: true
+      }
+    });
+
+  return  NextResponse.json(products).json;
 }
 
 async function getCategories() {
-  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+  // const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
   
-  const res = await fetch(`${process.env.NEXTAUTH_URL || 'https://your-domain.vercel.app'}/api/admin/categories`, {
-    cache: 'no-store',
-  });
+  // const res = await fetch(`${process.env.NEXTAUTH_URL || 'https://your-domain.vercel.app'}/api/admin/categories`, {
+  //   cache: 'no-store',
+  // });
 
-  if (!res.ok) throw new Error('Kategoriler alınamadı');
-
-  return res.json();
+  // if (!res.ok) throw new Error('Kategoriler alınamadı');
+      const categories = await prisma.category.findMany({
+        include: {
+          products: true 
+        }
+      });
+       
+  return NextResponse.json(categories).json();
 }
 
 export default async function ProductsPage() {
